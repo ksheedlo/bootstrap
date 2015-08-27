@@ -26,6 +26,74 @@ angular.module('ui.bootstrap.position', [])
     }
 
     /**
+     * Computes the `left` position property of a target element to be
+     * positioned.
+     * @param place the placement of the target element relative to the
+     *    host. For instance, place `'bottom'` means the target element
+     *    will be placed below the host.
+     * @param align the alignment of the element relative to the host.
+     *    For instance, align `'left'` means align the element with the host's
+     *    left edge. `'center'` may be passed to center the element.
+     * @param hostElPos the host element position, having at least a `width`
+     *    and `left` property.
+     * @param targetElWidth the width of the target element as a number of
+     *    pixels.
+     */
+    function computeLeftProperty(place, align, hostElPos, targetElWidth) {
+      if (place === 'left') {
+        return hostElPos.left - targetElWidth;
+      }
+
+      if (place === 'top' || place === 'bottom') {
+        if (align === 'left') {
+          return hostElPos.left;
+        }
+        if (align === 'center') {
+          return (hostElPos.left + hostElPos.width / 2) - (targetElWidth / 2);
+        }
+        // align === 'right'
+        return (hostElPos.left + hostElPos.width) - targetElWidth;
+      }
+
+      // place === 'right'
+      return hostElPos.left + hostElPos.width;
+    }
+
+    /**
+     * Computes the `top` position property of a target element to be
+     * positioned.
+     * @param place the placement of the target element relative to the
+     *    host. For instance, place `'bottom'` means the target element
+     *    will be placed below the host.
+     * @param align the alignment of the element relative to the host.
+     *    For instance, align `'left'` means align the element with the host's
+     *    left edge. `'center'` may be passed to center the element.
+     * @param hostElPos the host element position, having at least a `height`
+     *    and `top` property.
+     * @param targetElHeight the height of the target element as a number of
+     *    pixels.
+     */
+    function computeTopProperty(place, align, hostElPos, targetElHeight) {
+      if (place === 'top') {
+        return hostElPos.top - targetElHeight;
+      }
+
+      if (place === 'right' || place === 'left') {
+        if (align === 'top') {
+          return hostElPos.top;
+        }
+        if (align === 'center') {
+          return (hostElPos.top + hostElPos.height / 2) - (targetElHeight / 2);
+        }
+        // align === 'bottom'
+        return (hostElPos.top + hostElPos.height) - targetElHeight;
+      }
+
+      // place === 'bottom'
+      return hostElPos.top + hostElPos.height;
+    }
+
+    /**
      * returns the closest, non-statically positioned parentOffset of a given element
      * @param element
      */
@@ -81,70 +149,30 @@ angular.module('ui.bootstrap.position', [])
        */
       positionElements: function(hostEl, targetEl, positionStr, appendToBody) {
         var positionStrParts = positionStr.split('-');
-        var pos0 = positionStrParts[0], pos1 = positionStrParts[1] || 'center';
+        var place = positionStrParts[0],
+          align = positionStrParts[1] || 'center',
+          targetElPos = {};
 
         var hostElPos,
           targetElWidth,
-          targetElHeight,
-          targetElPos;
+          targetElHeight;
+
+        if (place !== 'top' && place !== 'right' && place !== 'bottom' && place !== 'left') {
+          place = 'top';
+        }
+        if (align !== 'top' && align !== 'right' && align !== 'bottom' && align !== 'left' && align !== 'center') {
+          align = 'center';
+        }
 
         hostElPos = appendToBody ? this.offset(hostEl) : this.position(hostEl);
 
         targetElWidth = targetEl.prop('offsetWidth');
         targetElHeight = targetEl.prop('offsetHeight');
 
-        var shiftWidth = {
-          center: function() {
-            return hostElPos.left + hostElPos.width / 2 - targetElWidth / 2;
-          },
-          left: function() {
-            return hostElPos.left;
-          },
-          right: function() {
-            return hostElPos.left + hostElPos.width;
-          }
+        return {
+          top: computeTopProperty(place, align, hostElPos, targetElHeight),
+          left: computeLeftProperty(place, align, hostElPos, targetElWidth)
         };
-
-        var shiftHeight = {
-          center: function() {
-            return hostElPos.top + hostElPos.height / 2 - targetElHeight / 2;
-          },
-          top: function() {
-            return hostElPos.top;
-          },
-          bottom: function() {
-            return hostElPos.top + hostElPos.height;
-          }
-        };
-
-        switch (pos0) {
-          case 'right':
-            targetElPos = {
-              top: shiftHeight[pos1](),
-              left: shiftWidth[pos0]()
-            };
-            break;
-          case 'left':
-            targetElPos = {
-              top: shiftHeight[pos1](),
-              left: hostElPos.left - targetElWidth
-            };
-            break;
-          case 'bottom':
-            targetElPos = {
-              top: shiftHeight[pos0](),
-              left: shiftWidth[pos1]()
-            };
-            break;
-          default:
-            targetElPos = {
-              top: hostElPos.top - targetElHeight,
-              left: shiftWidth[pos1]()
-            };
-            break;
-        }
-
-        return targetElPos;
       }
     };
   }]);

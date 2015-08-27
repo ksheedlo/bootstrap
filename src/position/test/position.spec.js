@@ -63,7 +63,7 @@ describe('position elements', function () {
     });
 
     it('should position on top-right', function() {
-      expect($position.positionElements({}, new TargetElMock(10, 10), 'top-right')).toBePositionedAt(90, 120);
+      expect($position.positionElements({}, new TargetElMock(10, 10), 'top-right')).toBePositionedAt(90, 110);
     });
 
     it('should position elements on bottom-center when "bottom" specified', function() {
@@ -76,7 +76,7 @@ describe('position elements', function () {
     });
 
     it('should position elements on bottom-right', function() {
-      expect($position.positionElements({}, new TargetElMock(10, 10), 'bottom-right')).toBePositionedAt(120, 120);
+      expect($position.positionElements({}, new TargetElMock(10, 10), 'bottom-right')).toBePositionedAt(120, 110);
     });
 
     it('should position elements on left-center when "left" specified', function() {
@@ -89,7 +89,7 @@ describe('position elements', function () {
     });
 
     it('should position elements on left-bottom when "left-bottom" specified', function() {
-      expect($position.positionElements({}, new TargetElMock(10, 10), 'left-bottom')).toBePositionedAt(120, 90);
+      expect($position.positionElements({}, new TargetElMock(10, 10), 'left-bottom')).toBePositionedAt(110, 90);
     });
 
     it('should position elements on right-center when "right" specified', function() {
@@ -101,8 +101,8 @@ describe('position elements', function () {
       expect($position.positionElements({}, new TargetElMock(10, 10), 'right-top')).toBePositionedAt(100, 120);
     });
 
-    it('should position elements on right-top when "right-top" specified', function() {
-      expect($position.positionElements({}, new TargetElMock(10, 10), 'right-bottom')).toBePositionedAt(120, 120);
+    it('should position elements on right-bottom when "right-bottom" specified', function() {
+      expect($position.positionElements({}, new TargetElMock(10, 10), 'right-bottom')).toBePositionedAt(110, 120);
     });
   });
 });
